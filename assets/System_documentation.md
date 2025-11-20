@@ -89,7 +89,7 @@ Specialties – Defines medical specialties for doctors.
 This structure allows complete traceability of clinical activities and supports CRUD operations required by the system.
 
 ### 3.2 ERD – Entity Relationship Diagram
-*(Insert your ERD image)*  
+![ERD](ERD.png)
 
 ### 3.3 Logical Model
 Describe each relationship between entities here.
@@ -980,4 +980,5 @@ The absence of authentication makes the demo simpler, but security should be add
 The database is normalized and matches real clinic workflow.
 
 Frontend provides a clean interface for CRUD operations.
+
 ---
