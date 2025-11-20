@@ -508,6 +508,7 @@ The architecture follows a modular, app-based structure, where each domain (user
 This modular design improves scalability, maintenance, and API reusability.
 
 **9.2 Backend Folder Structure
+```markdown
 backend/
 │── siteclinica/
 │   ├── settings.py
@@ -527,6 +528,7 @@ backend/
 
 Each app contains:
 
+```markdown
 myapp/
 │── models.py
 │── serializers.py
@@ -552,6 +554,7 @@ These correspond exactly to the tables in the ERD image you provided.
 
 The main file siteclinica/urls.py includes all app endpoints under the /api/ prefix:
 
+```typescript
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('myapps.user.urls_viewset')),
@@ -564,6 +567,7 @@ urlpatterns = [
 
 This means all API routes look like:
 
+```typescript
 /api/patient/
 /api/doctor/
 /api/specialty/
@@ -669,6 +673,8 @@ HTML / CSS
 
 This structure matches exactly what you showed in Visual Studio Code:
 
+
+```markdown
 frontend/
 │── angular.json
 │── package.json
@@ -733,6 +739,7 @@ Each entity communicates with the backend Django API through a dedicated Angular
 
 Example: Patient Service
 
+```typescript
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
@@ -808,6 +815,7 @@ Models define the structure for each data type.
 
 Example: Patient Model
 
+```typescript
 export interface PatientI {
   id?: number;
   name: string;
