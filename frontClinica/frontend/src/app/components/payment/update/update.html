@@ -1,0 +1,101 @@
+<div class="container mx-auto p-4">
+  <p-toast></p-toast>
+  
+  <div class="card">
+    <h2 class="text-2xl font-bold mb-4">Editar Pago #{{ paymentId }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="grid formgrid p-fluid">
+      
+      <!-- Cita -->
+      <div class="field col-12">
+        <label for="appointment_id" class="font-medium">Cita *</label>
+        <select 
+          id="appointment_id"
+          pInputText
+          formControlName="appointment_id"
+          class="w-full">
+          <option value="">Seleccione una cita...</option>
+          <option *ngFor="let appointment of appointmentOptions" 
+                  [value]="appointment.value">
+            {{ appointment.label }}
+          </option>
+        </select>
+        <small class="p-error block mt-1">
+          {{ getFieldError('appointment_id') }}
+        </small>
+      </div>
+
+      <!-- Monto -->
+      <div class="field col-12 md:col-6">
+        <label for="amount" class="font-medium">Monto *</label>
+        <input 
+          type="number" 
+          id="amount"
+          pInputText
+          formControlName="amount"
+          step="0.01"
+          min="0.01"
+          class="w-full">
+        <small class="p-error block mt-1">
+          {{ getFieldError('amount') }}
+        </small>
+      </div>
+
+      <!-- Método de Pago -->
+      <div class="field col-12 md:col-6">
+        <label for="payment_method" class="font-medium">Método de Pago *</label>
+        <select 
+          id="payment_method"
+          pInputText
+          formControlName="payment_method"
+          class="w-full">
+          <option value="">Seleccione método...</option>
+          <option *ngFor="let method of paymentMethodOptions" [value]="method.value">
+            {{ method.label }}
+          </option>
+        </select>
+        <small class="p-error block mt-1">
+          {{ getFieldError('payment_method') }}
+        </small>
+      </div>
+
+      <!-- Estado del Pago -->
+      <div class="field col-12">
+        <label for="payment_status" class="font-medium">Estado del Pago *</label>
+        <select 
+          id="payment_status"
+          pInputText
+          formControlName="payment_status"
+          class="w-full">
+          <option value="">Seleccione estado...</option>
+          <option *ngFor="let status of paymentStatusOptions" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+        <small class="p-error block mt-1">
+          {{ getFieldError('payment_status') }}
+        </small>
+      </div>
+
+      <!-- Botones -->
+      <div class="field col-12 flex gap-2 justify-content-end mt-4">
+        <button 
+          pButton 
+          type="button" 
+          label="Cancelar" 
+          class="p-button-secondary"
+          (click)="cancelar()"
+          [disabled]="loading">
+        </button>
+        <button 
+          pButton 
+          type="submit" 
+          label="Actualizar Pago" 
+          class="p-button-primary"
+          [disabled]="loading || form.invalid">
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

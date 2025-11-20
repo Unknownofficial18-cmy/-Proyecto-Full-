@@ -1,0 +1,116 @@
+
+<div class="card">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h2>Gestión de Pagos</h2>
+    <button 
+      pButton 
+      pRipple
+      icon="pi pi-plus"
+      label="Nuevo Pago" 
+      class="p-button-primary"
+      routerLink="/payments/new">
+    </button>
+  </div>
+
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  
+
+  <p-table 
+    [value]="payments" 
+    [loading]="loading"
+    [paginator]="true" 
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} pagos"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    styleClass="p-datatable-striped">
+    
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id" style="width: 5%">
+          ID <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="amount" style="width: 10%">
+          Monto <p-sortIcon field="amount"></p-sortIcon>
+        </th>
+        <th pSortableColumn="payment_method" style="width: 15%">
+          Método <p-sortIcon field="payment_method"></p-sortIcon>
+        </th>
+        <th pSortableColumn="payment_status" style="width: 12%">
+          Estado <p-sortIcon field="payment_status"></p-sortIcon>
+        </th>
+        <th pSortableColumn="payment_date" style="width: 12%">
+          Fecha <p-sortIcon field="payment_date"></p-sortIcon>
+        </th>
+        <th pSortableColumn="appointment_id" style="width: 10%">
+          Cita ID <p-sortIcon field="appointment_id"></p-sortIcon>
+        </th>
+        <th style="width: 16%">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-payment>
+      <tr>
+        <td>{{ payment.id }}</td>
+        <td>
+          <span class="font-bold text-green-600">
+            {{ formatPaymentAmount(payment.amount) }}
+          </span>
+        </td>
+        <td>
+          <span [class]="getPaymentMethodBadgeClass(payment.payment_method)">
+            {{ getPaymentMethodLabel(payment.payment_method) }}
+          </span>
+        </td>
+        <td>
+          <span [class]="getPaymentStatusBadgeClass(payment.payment_status)">
+            {{ getPaymentStatusLabel(payment.payment_status) }}
+          </span>
+        </td>
+        <td>{{ formatDate(payment.payment_date) }}</td>
+        <td>
+          <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded border border-gray-200">
+            #{{ payment.appointment_id }}
+          </span>
+        </td>
+        <td>
+          <div class="flex gap-2">
+            <button 
+              pButton 
+              pRipple
+              icon="pi pi-pencil" 
+              class="p-button-warning p-button-sm"
+              pTooltip="Editar"
+              tooltipPosition="top"
+              [routerLink]="['/payments/edit', payment.id]">
+            </button>
+            
+            <button 
+              pButton 
+              pRipple
+              icon="pi pi-trash" 
+              class="p-button-danger p-button-sm"
+              pTooltip="Eliminar" 
+              tooltipPosition="top"
+              (click)="confirmDelete(payment)">
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" class="text-center py-4">
+          <div class="flex flex-column align-items-center justify-content-center">
+            <i class="pi pi-inbox text-4xl text-gray-400 mb-2"></i>
+            <span class="text-gray-500">No se encontraron pagos</span>
+            <small class="text-gray-400 mt-2">(Total de pagos en componente: {{ payments.length }})</small>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

@@ -1,0 +1,115 @@
+<div class="card p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Agregar Nuevo Medicamento</h2>
+    <button
+      pButton
+      label="Volver al Inventario"
+      icon="pi pi-arrow-left"
+      [routerLink]="['/medicines']"
+      class="p-button-secondary"
+    ></button>
+  </div>
+
+  <form [formGroup]="medicineForm" (ngSubmit)="onSubmit()" class="max-w-2xl mx-auto">
+    
+    <!-- Nombre del Medicamento -->
+    <div class="field mb-4">
+      <label for="name" class="block font-medium mb-2">
+        Nombre del Medicamento <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="name"
+        pInputText
+        formControlName="name"
+        placeholder="Ej: Paracetamol, Amoxicilina, etc."
+        class="w-full"
+        [class]="{'p-invalid': isFieldInvalid('name')}"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('name')">
+        {{ getFieldError('name') || 'El nombre es requerido' }}
+      </small>
+    </div>
+
+    <!-- Presentación -->
+    <div class="field mb-4">
+      <label for="presentation" class="block font-medium mb-2">
+        Presentación <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="presentation"
+        pInputText
+        formControlName="presentation"
+        placeholder="Ej: Tabletas, Jarabe, Cápsulas, Inyectable, etc."
+        class="w-full"
+        [class]="{'p-invalid': isFieldInvalid('presentation')}"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('presentation')">
+        {{ getFieldError('presentation') || 'La presentación es requerida' }}
+      </small>
+    </div>
+
+    <!-- Dosis -->
+    <div class="field mb-6">
+      <label for="dose" class="block font-medium mb-2">
+        Dosis <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="dose"
+        pInputText
+        formControlName="dose"
+        placeholder="Ej: 500mg, 250mg/5ml, 1g, etc."
+        class="w-full"
+        [class]="{'p-invalid': isFieldInvalid('dose')}"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('dose')">
+        {{ getFieldError('dose') || 'La dosis es requerida' }}
+      </small>
+    </div>
+
+    <!-- Información de Ejemplo -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <h3 class="font-semibold text-blue-800 mb-2">💡 Ejemplos de medicamentos:</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div>
+          <span class="font-medium">Paracetamol</span>
+          <p>Tabletas - 500mg</p>
+        </div>
+        <div>
+          <span class="font-medium">Amoxicilina</span>
+          <p>Cápsulas - 500mg</p>
+        </div>
+        <div>
+          <span class="font-medium">Ibuprofeno</span>
+          <p>Jarabe - 100mg/5ml</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="field flex justify-end gap-3">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="onCancel()"
+        class="p-button-secondary"
+        [disabled]="submitting"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        label="Crear Medicamento"
+        icon="pi pi-save"
+        class="p-button-primary"
+        [disabled]="medicineForm.invalid || submitting"
+        [loading]="submitting"
+      ></button>
+    </div>
+  </form>
+</div>
+
+<p-toast></p-toast>

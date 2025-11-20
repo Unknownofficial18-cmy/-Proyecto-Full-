@@ -1,0 +1,117 @@
+<div class="card p-8">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">Lista de Citas</h2>
+        <button
+            pButton
+            label="Agendar Nueva Cita"
+            icon="pi pi-calendar-plus"
+            [routerLink]="['/appointments/schedule']"
+            class="p-button-success"
+        ></button>
+    </div>
+
+    <p-table 
+        [value]="appointments" 
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} citas"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        dataKey="id"
+        styleClass="p-datatable-striped"
+        [tableStyle]="{'min-width': '80rem'}"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="appointment_date">Fecha y Hora <p-sortIcon field="appointment_date"></p-sortIcon></th>
+                <th pSortableColumn="patient_id">Paciente <p-sortIcon field="patient_id"></p-sortIcon></th>
+                <th pSortableColumn="doctor_id">Doctor <p-sortIcon field="doctor_id"></p-sortIcon></th>
+                <th>Especialidad</th>
+                <th pSortableColumn="reason">Motivo <p-sortIcon field="reason"></p-sortIcon></th>
+                <th pSortableColumn="status">Estado <p-sortIcon field="status"></p-sortIcon></th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-appointment>
+            <tr>
+                <td>{{ appointment.id }}</td>
+                <td>
+                    <div class="font-semibold">{{ formatDateTime(appointment.appointment_date) }}</div>
+                </td>
+                <td>
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-user text-blue-500"></i>
+                        <span>{{ getPatientName(appointment) }}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-briefcase text-green-500"></i>
+                        <span>{{ getDoctorName(appointment) }}</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                        {{ getSpecialtyName(appointment) }}
+                    </span>
+                </td>
+                <td>
+                    <div class="max-w-xs truncate" pTooltip="{{ appointment.reason }}" tooltipPosition="top">
+                        {{ appointment.reason }}
+                    </div>
+                </td>
+                <td>
+                    <p-tag 
+                        [value]="getStatusLabel(appointment.status)" 
+                        [severity]="getStatusSeverity(appointment.status)"
+                        styleClass="text-xs font-bold"
+                    ></p-tag>
+                </td>
+                <td class="text-center">
+                    <div class="flex justify-center gap-2">
+                        <button
+                            pButton
+                            icon="pi pi-pencil"
+                            [routerLink]="['/appointments/edit', appointment.id]"
+                            class="p-button-rounded p-button-text p-button-warning"
+                            pTooltip="Editar Cita"
+                            tooltipPosition="top"
+                        ></button>
+                        <button
+                            pButton
+                            icon="pi pi-trash"
+                            (click)="confirmDelete(appointment)"
+                            class="p-button-rounded p-button-text p-button-danger"
+                            pTooltip="Eliminar Cita"
+                            tooltipPosition="top"
+                        ></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="8" class="text-center p-4">
+                    <div class="flex flex-col items-center gap-3">
+                        <i class="pi pi-calendar-times text-4xl text-gray-400"></i>
+                        <span class="text-gray-500">No se encontraron citas programadas</span>
+                        <button
+                            pButton
+                            label="Agendar Primera Cita"
+                            icon="pi pi-calendar-plus"
+                            [routerLink]="['/appointments/schedule']"
+                            class="p-button-sm p-button-outlined"
+                        ></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

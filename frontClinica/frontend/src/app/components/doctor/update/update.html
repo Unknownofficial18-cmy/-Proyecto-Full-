@@ -1,0 +1,177 @@
+<div class="card p-8">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-2">Editar Doctor</h2>
+        <p class="text-gray-600">Actualice los datos del doctor</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="max-w-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Nombre -->
+            <div class="field">
+                <label for="name" class="block text-sm font-medium mb-2">
+                    Nombre *
+                </label>
+                <input
+                    id="name"
+                    type="text"
+                    pInputText
+                    formControlName="name"
+                    placeholder="Ingrese el nombre"
+                    class="w-full"
+                    [class]="{'ng-invalid ng-dirty': form.get('name')?.invalid && form.get('name')?.touched}"
+                />
+                <small class="text-red-500 text-sm mt-1 block" *ngIf="getFieldError('name')">
+                    {{ getFieldError('name') }}
+                </small>
+            </div>
+
+            <!-- Apellido -->
+            <div class="field">
+                <label for="last_name" class="block text-sm font-medium mb-2">
+                    Apellido *
+                </label>
+                <input
+                    id="last_name"
+                    type="text"
+                    pInputText
+                    formControlName="last_name"
+                    placeholder="Ingrese el apellido"
+                    class="w-full"
+                    [class]="{'ng-invalid ng-dirty': form.get('last_name')?.invalid && form.get('last_name')?.touched}"
+                />
+                <small class="text-red-500 text-sm mt-1 block" *ngIf="getFieldError('last_name')">
+                    {{ getFieldError('last_name') }}
+                </small>
+            </div>
+
+            <!-- Género -->
+            <div class="field">
+                <label for="gender" class="block text-sm font-medium mb-2">
+                    Género *
+                </label>
+                <p-select
+                    id="gender"
+                    formControlName="gender"
+                    [options]="genderOptions"
+                    placeholder="Seleccione género"
+                    class="w-full"
+                    [class]="{'ng-invalid ng-dirty': form.get('gender')?.invalid && form.get('gender')?.touched}"
+                ></p-select>
+                <small class="text-red-500 text-sm mt-1 block" *ngIf="getFieldError('gender')">
+                    {{ getFieldError('gender') }}
+                </small>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="field">
+                <label for="telephone" class="block text-sm font-medium mb-2">
+                    Teléfono *
+                </label>
+                <input
+                    id="telephone"
+                    type="text"
+                    pInputText
+                    formControlName="telephone"
+                    placeholder="10 dígitos"
+                    class="w-full"
+                    [class]="{'ng-invalid ng-dirty': form.get('telephone')?.invalid && form.get('telephone')?.touched}"
+                    (input)="cleanTelephoneInput($event)"
+                    (keypress)="onTelephoneKeyPress($event)"
+                    (paste)="onTelephonePaste($event)"
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                />
+                <small class="text-red-500 text-sm mt-1 block" *ngIf="getFieldError('telephone')">
+                    {{ getFieldError('telephone') }}
+                </small>
+                <small class="text-gray-500 text-sm mt-1 block">
+                    Caracteres: {{ form.get('telephone')?.value?.length || 0 }}/10
+                </small>
+            </div>
+
+            <!-- Email -->
+            <div class="field">
+                <label for="email" class="block text-sm font-medium mb-2">
+                    Email *
+                </label>
+                <input
+                    id="email"
+                    type="email"
+                    pInputText
+                    formControlName="email"
+                    placeholder="correo@ejemplo.com"
+                    class="w-full"
+                    [class]="{'ng-invalid ng-dirty': form.get('email')?.invalid && form.get('email')?.touched}"
+                />
+                <small class="text-red-500 text-sm mt-1 block" *ngIf="getFieldError('email')">
+                    {{ getFieldError('email') }}
+                </small>
+            </div>
+
+            <!-- Especialidad -->
+            <div class="field">
+                <label for="specialty_id" class="block text-sm font-medium mb-2">
+                    Especialidad *
+                </label>
+                <p-select
+                    id="specialty_id"
+                    formControlName="specialty_id"
+                    [options]="specialtyOptions"
+                    placeholder="Seleccione especialidad"
+                    class="w-full"
+                    [class]="{'ng-invalid ng-dirty': form.get('specialty_id')?.invalid && form.get('specialty_id')?.touched}"
+                    [loading]="loadingSpecialties"
+                    [disabled]="loadingSpecialties"
+                >
+                    <ng-template pTemplate="dropdownicon">
+                        <i class="pi pi-spin pi-spinner" *ngIf="loadingSpecialties"></i>
+                    </ng-template>
+                </p-select>
+                <small class="text-red-500 text-sm mt-1 block" *ngIf="getFieldError('specialty_id')">
+                    {{ getFieldError('specialty_id') }}
+                </small>
+                <small class="text-blue-500 text-sm mt-1 block" *ngIf="loadingSpecialties">
+                    Cargando especialidades...
+                </small>
+            </div>
+
+            <!-- Estado -->
+            <div class="field">
+                <label for="status" class="block text-sm font-medium mb-2">
+                    Estado *
+                </label>
+                <p-select
+                    id="status"
+                    formControlName="status"
+                    [options]="statusOptions"
+                    placeholder="Seleccione estado"
+                    class="w-full"
+                ></p-select>
+            </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+            <button
+                pButton
+                type="submit"
+                label="Actualizar Doctor"
+                icon="pi pi-check"
+                class="p-button-success"
+                [loading]="loading"
+                [disabled]="loading || loadingSpecialties"
+            ></button>
+            
+            <button
+                pButton
+                type="button"
+                label="Cancelar"
+                icon="pi pi-times"
+                class="p-button-secondary"
+                (click)="cancelar()"
+                [disabled]="loading"
+            ></button>
+        </div>
+    </form>
+</div>
+
+<p-toast></p-toast>

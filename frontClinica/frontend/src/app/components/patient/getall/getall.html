@@ -1,0 +1,147 @@
+<div class="card p-8">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">Gestión de Pacientes</h2>
+        <button
+            pButton
+            label="Nuevo Paciente"
+            icon="pi pi-plus"
+            [routerLink]="['/patients/new']"
+            class="p-button-success"
+        ></button>
+    </div>
+
+    <p-table 
+        [value]="patients" 
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        dataKey="id"
+        styleClass="p-datatable-striped"
+        [tableStyle]="{'min-width': '60rem'}"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="id">
+                    ID <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th pSortableColumn="name">
+                    Nombre <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th pSortableColumn="last_name">
+                    Apellido <p-sortIcon field="last_name"></p-sortIcon>
+                </th>
+                <th pSortableColumn="gender">
+                    Género <p-sortIcon field="gender"></p-sortIcon>
+                </th>
+                <th pSortableColumn="type_document">
+                    Tipo de Documento <p-sortIcon field="type_document"></p-sortIcon>
+                </th>
+                <th pSortableColumn="documentnumber">
+                    Número de Documento <p-sortIcon field="documentnumber"></p-sortIcon>
+                </th>
+                <th pSortableColumn="birth_date">
+                    Fecha de Nacimiento <p-sortIcon field="birth_date"></p-sortIcon>
+                </th>
+                <th pSortableColumn="address">
+                    Dirección <p-sortIcon field="address"></p-sortIcon>
+                </th>
+                <th pSortableColumn="telephone">
+                    Teléfono <p-sortIcon field="telephone"></p-sortIcon>
+                </th>
+                <th pSortableColumn="email">
+                    Email <p-sortIcon field="email"></p-sortIcon>
+                </th>
+                <th pSortableColumn="status">
+                    Estado <p-sortIcon field="status"></p-sortIcon>
+                </th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+    <tr>
+        <th pSortableColumn="id">ID</th>
+        <th pSortableColumn="name">Nombre</th>
+        <th pSortableColumn="last_name">Apellido</th>
+        <th pSortableColumn="birth_date">Fecha Nac.</th>
+        <th pSortableColumn="gender">Género</th>
+        <th pSortableColumn="type_document">Tipo Doc.</th>
+        <th pSortableColumn="documentnumber">N° Documento</th>
+        <th pSortableColumn="telephone">Teléfono</th>
+        <th pSortableColumn="address">Dirección</th>
+        <th pSortableColumn="status">Estado</th>
+        <th class="text-center">Acciones</th>
+    </tr>
+</ng-template>
+
+<ng-template pTemplate="body" let-patient>
+    <tr>
+        <td>{{ patient.id }}</td>
+        <td>{{ patient.name }}</td>
+        <td>{{ patient.last_name }}</td>
+        <td>{{ patient.birth_date | date:'dd/MM/yyyy' }}</td>
+        <td>
+            <span [class]="getGenderBadgeClass(patient.gender)">
+                {{ getGenderLabel(patient.gender) }}
+            </span>
+        </td>
+        <td>
+            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                {{ getDocumentTypeLabel(patient.type_document) }}
+            </span>
+        </td>
+        <td>{{ patient.documentnumber }}</td>
+        <td>{{ patient.telephone }}</td>
+        <td>{{ patient.address }}</td>
+        <td>
+            <span [class]="getStatusBadgeClass(patient.status)">
+                {{ patient.status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}
+            </span>
+        </td>
+        <td class="text-center">
+            <div class="flex justify-center gap-2">
+                <button
+                    pButton
+                    icon="pi pi-pencil"
+                    [routerLink]="['/patients/edit', patient.id]"
+                    class="p-button-rounded p-button-text p-button-warning"
+                    pTooltip="Editar"
+                    tooltipPosition="top"
+                ></button>
+                <button
+                    pButton
+                    icon="pi pi-trash"
+                    (click)="confirmDelete(patient)"
+                    class="p-button-rounded p-button-text p-button-danger"
+                    pTooltip="Eliminar"
+                    tooltipPosition="top"
+                ></button>
+            </div>
+        </td>
+    </tr>
+</ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="9" class="text-center p-4">
+                    <div class="flex flex-col items-center gap-3">
+                        <i class="pi pi-info-circle text-4xl text-gray-400"></i>
+                        <span class="text-gray-500">No se encontraron pacientes</span>
+                        <button
+                            pButton
+                            label="Crear Primer Paciente"
+                            icon="pi pi-plus"
+                            [routerLink]="['/patients/new']"
+                            class="p-button-sm p-button-outlined"
+                        ></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

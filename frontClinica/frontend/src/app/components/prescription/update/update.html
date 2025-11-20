@@ -1,0 +1,124 @@
+<div class="card p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Editar Receta #{{ prescriptionId }}</h2>
+    <button
+      pButton
+      label="Volver a Recetas"
+      icon="pi pi-arrow-left"
+      [routerLink]="['/prescriptions']"
+      class="p-button-secondary"
+    ></button>
+  </div>
+
+  <!-- Información actual -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6" *ngIf="prescription">
+    <h3 class="font-semibold text-blue-800 mb-2">Información Actual de la Receta</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <div>
+        <span class="font-medium">Paciente:</span>
+        <p>{{ getPatientName() }}</p>
+      </div>
+      <div>
+        <span class="font-medium">Doctor:</span>
+        <p>{{ getDoctorName() }}</p>
+      </div>
+      <div>
+        <span class="font-medium">Fecha Receta:</span>
+        <p>{{ formatDate(prescription.prescription_date) }}</p>
+      </div>
+      <div>
+        <span class="font-medium">Medicamentos:</span>
+        <p>{{ getMedicinesCount() }} medicamento(s)</p>
+      </div>
+      <div>
+        <span class="font-medium">Fecha Cita:</span>
+        <p>{{ formatDate(prescription.appointment?.appointment_date) }}</p>
+      </div>
+      <div>
+        <span class="font-medium">Motivo Cita:</span>
+        <p>{{ prescription.appointment?.reason }}</p>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()" class="max-w-2xl mx-auto">
+    
+    <!-- Fecha de la Receta -->
+    <div class="field mb-4">
+      <label for="prescription_date" class="block font-medium mb-2">
+        Fecha de la Receta <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="date"
+        id="prescription_date"
+        formControlName="prescription_date"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('prescription_date')"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('prescription_date')">
+        {{ getFieldError('prescription_date') || 'La fecha es requerida' }}
+      </small>
+    </div>
+
+    <!-- Selección de Cita -->
+    <div class="field mb-6">
+      <label for="appointment_id" class="block font-medium mb-2">
+        Cita Asociada <span class="text-red-500">*</span>
+      </label>
+      <select
+        id="appointment_id"
+        formControlName="appointment_id"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('appointment_id')"
+      >
+        <option value="">Seleccione una cita</option>
+        <option *ngFor="let appointment of appointments" 
+                [value]="appointment.id" 
+                [selected]="appointment.id === prescription.appointment_id">
+          {{ getAppointmentDisplay(appointment) }}
+        </option>
+      </select>
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('appointment_id')">
+        {{ getFieldError('appointment_id') || 'La cita es requerida' }}
+      </small>
+      
+      <!-- Loading indicator -->
+      <div *ngIf="loading" class="mt-2">
+        <i class="pi pi-spin pi-spinner text-blue-500"></i>
+        <span class="text-gray-600 ml-2">Cargando citas...</span>
+      </div>
+    </div>
+
+
+
+    <!-- Botones -->
+    <div class="field flex justify-end gap-3">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="onCancel()"
+        class="p-button-secondary"
+        [disabled]="submitting"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        label="Actualizar Receta"
+        icon="pi pi-check"
+        class="p-button-warning"
+        [disabled]="prescriptionForm.invalid || submitting || !prescriptionForm.dirty"
+        [loading]="submitting"
+      ></button>
+    </div>
+  </form>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center p-8">
+    <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    <p class="mt-2 text-gray-600">Cargando información de la receta...</p>
+  </div>
+</div>
+
+<p-toast></p-toast>

@@ -1,0 +1,177 @@
+<div class="card p-8">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold">Gestión de Recetas Médicas</h2>
+    <button
+      pButton
+      label="Nueva Receta"
+      icon="pi pi-file-plus"
+      [routerLink]="['/prescriptions/new']"
+      class="p-button-success"
+    ></button>
+  </div>
+
+  <p-table 
+    [value]="prescriptions" 
+    [loading]="loading"
+    [paginator]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} recetas"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    dataKey="id"
+    styleClass="p-datatable-striped"
+    [tableStyle]="{'min-width': '100rem'}"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+        <th pSortableColumn="prescription_date">Fecha Receta <p-sortIcon field="prescription_date"></p-sortIcon></th>
+        <th>Paciente</th>
+        <th>Doctor</th>
+        <th>Especialidad</th>
+        <th>Medicamentos Recetados</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-prescription>
+      <tr>
+        <td>{{ prescription.id }}</td>
+        <td>
+          <div class="font-semibold">{{ formatDate(prescription.prescription_date) }}</div>
+        </td>
+        <td>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-user text-blue-500"></i>
+            <span class="font-medium">{{ getPatientName(prescription) }}</span>
+          </div>
+        </td>
+        <td>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-user-md text-green-500"></i>
+            <span>{{ getDoctorName(prescription) }}</span>
+          </div>
+        </td>
+        <td>
+          <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
+            {{ getSpecialtyName(prescription) }}
+          </span>
+        </td>
+        <td>
+          <div *ngIf="hasMedicines(prescription); else noMedicines" class="space-y-2">
+            <div *ngFor="let detail of prescription.recipe_details" class="medicine-item border border-gray-200 rounded-lg p-3 bg-white">
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-capsule text-blue-500"></i>
+                  <span class="font-semibold text-gray-800">{{ detail.medicine.name }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <button
+                    pButton
+                    icon="pi pi-pencil"
+                    [routerLink]="['/recipedetails/edit', detail.id]"
+                    class="p-button-rounded p-button-text p-button-warning p-button-sm"
+                    pTooltip="Editar Medicamento"
+                    tooltipPosition="top"
+                  ></button>
+                  <button
+                    pButton
+                    icon="pi pi-trash"
+                    (click)="confirmDeleteMedicine(detail.id, detail.medicine.name)"
+                    class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                    pTooltip="Eliminar Medicamento"
+                    tooltipPosition="top"
+                  ></button>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span class="font-medium text-gray-600">Cantidad:</span>
+                  <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs ml-2">
+                    {{ detail.amount }} unidades
+                  </span>
+                </div>
+                <div>
+                  <span class="font-medium text-gray-600">Dosis:</span>
+                  <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs ml-2">
+                    {{ detail.medicine.dose }}
+                  </span>
+                </div>
+                <div class="col-span-2">
+                  <span class="font-medium text-gray-600">Indicaciones:</span>
+                  <p class="text-gray-700 mt-1">{{ detail.indications }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Botón para agregar más medicamentos -->
+            <div class="text-center pt-2">
+              <button
+                pButton
+                label="Agregar Medicamento"
+                icon="pi pi-plus"
+                [routerLink]="['/recipedetails/new', prescription.id]"
+                class="p-button-outlined p-button-sm"
+              ></button>
+            </div>
+          </div>
+          
+          <ng-template #noMedicines>
+            <div class="text-center py-4">
+              <i class="pi pi-capsule text-2xl text-gray-300 mb-2"></i>
+              <p class="text-gray-500 text-sm mb-2">No hay medicamentos en esta receta</p>
+              <button
+                pButton
+                label="Agregar Primer Medicamento"
+                icon="pi pi-plus"
+                [routerLink]="['/recipedetails/new', prescription.id]"
+                class="p-button-outlined p-button-sm"
+              ></button>
+            </div>
+          </ng-template>
+        </td>
+        <td class="text-center">
+          <div class="flex justify-center gap-2">
+            <button
+              pButton
+              icon="pi pi-pencil"
+              [routerLink]="['/prescriptions/edit', prescription.id]"
+              class="p-button-rounded p-button-text p-button-warning"
+              pTooltip="Editar Receta"
+              tooltipPosition="top"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-trash"
+              (click)="confirmDelete(prescription)"
+              class="p-button-rounded p-button-text p-button-danger"
+              pTooltip="Eliminar Receta"
+              tooltipPosition="top"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" class="text-center p-4">
+          <div class="flex flex-col items-center gap-3">
+            <i class="pi pi-file-medical text-4xl text-gray-400"></i>
+            <span class="text-gray-500">No se encontraron recetas médicas</span>
+            <button
+              pButton
+              label="Crear Primera Receta"
+              icon="pi pi-file-plus"
+              [routerLink]="['/prescriptions/new']"
+              class="p-button-sm p-button-outlined"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

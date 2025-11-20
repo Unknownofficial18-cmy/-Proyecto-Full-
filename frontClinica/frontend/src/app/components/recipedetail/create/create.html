@@ -1,0 +1,99 @@
+<div class="card p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Agregar Medicamento a Receta #{{ prescriptionId }}</h2>
+    <button
+      pButton
+      label="Volver a Recetas"
+      icon="pi pi-arrow-left"
+      [routerLink]="['/prescriptions']"
+      class="p-button-secondary"
+    ></button>
+  </div>
+
+  <form [formGroup]="recipeDetailForm" (ngSubmit)="onSubmit()" class="max-w-2xl mx-auto">
+    
+    <!-- Selección de Medicamento -->
+    <div class="field mb-4">
+      <label for="medicine_id" class="block font-medium mb-2">
+        Medicamento <span class="text-red-500">*</span>
+      </label>
+      <select
+        id="medicine_id"
+        formControlName="medicine_id"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('medicine_id')"
+      >
+        <option value="">Seleccione un medicamento</option>
+        <option *ngFor="let medicine of medicines" [value]="medicine.id">
+          {{ medicine.name }} - {{ medicine.presentation }} ({{ medicine.dose }})
+        </option>
+      </select>
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('medicine_id')">
+        {{ getFieldError('medicine_id') || 'El medicamento es requerido' }}
+      </small>
+    </div>
+
+    <!-- Cantidad -->
+    <div class="field mb-4">
+      <label for="amount" class="block font-medium mb-2">
+        Cantidad <span class="text-red-500">*</span>
+      </label>
+      <p-inputNumber
+        id="amount"
+        formControlName="amount"
+        [min]="1"
+        mode="decimal"
+        [showButtons]="true"
+        placeholder="Ej: 10, 20, 30"
+        class="w-full"
+        [class]="{'p-invalid': isFieldInvalid('amount')}"
+      ></p-inputNumber>
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('amount')">
+        {{ getFieldError('amount') || 'La cantidad es requerida' }}
+      </small>
+    </div>
+
+    <!-- Indicaciones -->
+    <div class="field mb-6">
+      <label for="indications" class="block font-medium mb-2">
+        Indicaciones <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="indications"
+        pInputText
+        formControlName="indications"
+        placeholder="Ej: Tomar cada 8 horas, Aplicar 2 veces al día, etc."
+        class="w-full"
+        [class]="{'p-invalid': isFieldInvalid('indications')}"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('indications')">
+        {{ getFieldError('indications') || 'Las indicaciones son requeridas' }}
+      </small>
+    </div>
+
+    <!-- Botones -->
+    <div class="field flex justify-end gap-3">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="onCancel()"
+        class="p-button-secondary"
+        [disabled]="submitting"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        label="Agregar Medicamento"
+        icon="pi pi-plus"
+        class="p-button-primary"
+        [disabled]="recipeDetailForm.invalid || submitting"
+        [loading]="submitting"
+      ></button>
+    </div>
+  </form>
+</div>
+
+<p-toast></p-toast>

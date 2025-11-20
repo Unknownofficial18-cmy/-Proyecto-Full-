@@ -1,0 +1,61 @@
+### patient.http
+@baseUrl = http://localhost:8000
+
+### 🏥 OBTENER TODOS LOS PACIENTES
+GET {{baseUrl}}/api/patients/
+Content-Type: application/json
+
+### 🔍 OBTENER PACIENTE POR ID
+GET {{baseUrl}}/api/patients/1/
+Content-Type: application/json
+
+### ➕ CREAR NUEVO PACIENTE
+POST {{baseUrl}}/api/patients/
+Content-Type: application/json
+
+{
+  "name": "María",
+  "last_name": "Lopez",
+  "birth_date": "1990-05-15",
+  "gender": "F",
+  "type_document": "C.C",
+  "documentnumber": "123456789",
+  "address": "Calle 123, Ciudad",
+  "telephone": "3009876543"
+}
+
+### ✏️ ACTUALIZAR PACIENTE COMPLETAMENTE (PUT)
+PUT {{baseUrl}}/api/patients/1/
+Content-Type: application/json
+
+{
+  "name": "María Carmen",
+  "last_name": "Lopez García",
+  "birth_date": "1990-05-15",
+  "gender": "F",
+  "type_document": "C.C",
+  "documentnumber": "123456789",
+  "address": "Avenida Principal 456",
+  "telephone": "3101234567"
+}
+
+### 🗑️ ELIMINAR PACIENTE
+DELETE {{baseUrl}}/api/patients/2/
+Content-Type: application/json
+
+### 🔄 ACTUALIZACIÓN PARCIAL (PATCH)
+PATCH {{baseUrl}}/api/patients/1/
+Content-Type: application/json
+
+{
+  "telephone": "3119998888",
+  "address": "Nueva dirección actualizada"
+}
+
+### 📋 BUSCAR PACIENTES POR NOMBRE (si implementas filtros)
+GET {{baseUrl}}/api/patients/?search=maria
+Content-Type: application/json
+
+### 📊 FILTRAR POR TIPO DE DOCUMENTO (si implementas filtros)
+GET {{baseUrl}}/api/patients/?type_document=C.C
+Content-Type: application/json

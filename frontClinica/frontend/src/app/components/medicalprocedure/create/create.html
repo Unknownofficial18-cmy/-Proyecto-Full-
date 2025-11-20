@@ -1,0 +1,125 @@
+<div class="container">
+  <!-- Header -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="text-primary">Crear Procedimiento Médico</h2>
+      <p class="text-color-secondary">Registrar un nuevo procedimiento médico realizado</p>
+    </div>
+    <button 
+      pButton 
+      icon="pi pi-arrow-left" 
+      label="Volver" 
+      class="p-button-secondary"
+      (click)="onCancel()">
+    </button>
+  </div>
+
+  <!-- Form Container -->
+  <div class="grid">
+    <div class="col-12 lg:col-8 xl:col-6">
+      <p-card header="Información del Procedimiento">
+        <form [formGroup]="procedureForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Cita Selection -->
+          <div class="field mb-4">
+            <label for="appointment_id" class="block font-medium mb-2">
+              Cita Médica <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="appointment_id"
+              formControlName="appointment_id"
+              class="w-full p-3 border-1 border-round surface-border"
+              [class]="isFieldInvalid('appointment_id') ? 'border-red-500' : ''">
+              <option value="">Seleccione una cita atendida</option>
+              <option *ngFor="let appointment of appointments" [value]="appointment.id">
+                Cita #{{ appointment.id }} - {{ formatDate(appointment.appointment_date) }} - 
+                {{ getPatientName(appointment) }} - {{ getDoctorName(appointment) }}
+              </option>
+            </select>
+            
+            <small *ngIf="isFieldInvalid('appointment_id')" class="text-red-500 block mt-1">
+              {{ getFieldError('appointment_id') }}
+            </small>
+            <small class="text-color-secondary block mt-1">
+              Solo se muestran citas con estado "ATENDIDA"
+            </small>
+          </div>
+
+          <!-- Description -->
+          <div class="field mb-4">
+            <label for="description" class="block font-medium mb-2">
+              Descripción del Procedimiento <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="8"
+              placeholder="Describa detalladamente el procedimiento médico realizado, técnicas utilizadas, materiales, observaciones..."
+              class="w-full p-3 border-1 border-round surface-border"
+              [class]="isFieldInvalid('description') ? 'border-red-500' : ''"
+              style="resize: vertical; min-height: 150px;">
+            </textarea>
+            
+            <small *ngIf="isFieldInvalid('description')" class="text-red-500 block mt-1">
+              {{ getFieldError('description') }}
+            </small>
+            <div class="flex justify-content-between mt-1">
+              <small class="text-color-secondary">
+                Mínimo 10 caracteres
+              </small>
+              <small 
+                [class]="procedureForm.get('description')?.value?.length > 1000 ? 'text-red-500' : 'text-color-secondary'">
+                {{ procedureForm.get('description')?.value?.length || 0 }}/1000 caracteres
+              </small>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 justify-content-end mt-4 pt-3 border-top-1 surface-border">
+            <button
+              pButton
+              type="button"
+              label="Cancelar"
+              icon="pi pi-times"
+              class="p-button-outlined p-button-secondary"
+              (click)="onCancel()"
+              [disabled]="submitting">
+            </button>
+            <button
+              pButton
+              type="submit"
+              label="Crear Procedimiento"
+              icon="pi pi-check"
+              class="p-button-primary"
+              [disabled]="submitting || procedureForm.invalid">
+            </button>
+          </div>
+        </form>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center p-4">
+    <i class="pi pi-spin pi-spinner text-2xl text-primary"></i>
+    <p class="mt-2 text-color-secondary">Cargando citas atendidas...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && appointments.length === 0" class="text-center p-4">
+    <div class="border-round border-1 surface-border p-4">
+      <i class="pi pi-info-circle text-2xl text-color-secondary mb-2"></i>
+      <h4 class="text-color-secondary mb-2">No hay citas disponibles</h4>
+      <p class="text-color-secondary mb-3">No se encontraron citas con estado "ATENDIDA" para crear procedimientos.</p>
+      <button 
+        pButton 
+        label="Volver a Procedimientos" 
+        icon="pi pi-arrow-left"
+        class="p-button-outlined"
+        (click)="onCancel()">
+      </button>
+    </div>
+  </div>
+
+  <p-toast></p-toast>
+</div>

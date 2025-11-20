@@ -1,0 +1,95 @@
+<div class="card p-8">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold">Inventario de Medicamentos</h2>
+    <button
+      pButton
+      label="Nuevo Medicamento"
+      icon="pi pi-plus"
+      [routerLink]="['/medicines/new']"
+      class="p-button-success"
+    ></button>
+  </div>
+
+  <p-table 
+    [value]="medicines" 
+    [loading]="loading"
+    [paginator]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} medicamentos"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    dataKey="id"
+    styleClass="p-datatable-striped"
+    [tableStyle]="{'min-width': '60rem'}"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+        <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="presentation">Presentación <p-sortIcon field="presentation"></p-sortIcon></th>
+        <th pSortableColumn="dose">Dosis <p-sortIcon field="dose"></p-sortIcon></th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-medicine>
+      <tr>
+        <td>{{ medicine.id }}</td>
+        <td>
+          <div class="font-semibold text-blue-600">{{ medicine.name }}</div>
+        </td>
+        <td>
+          <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+            {{ medicine.presentation }}
+          </span>
+        </td>
+        <td>
+          <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
+            {{ medicine.dose }}
+          </span>
+        </td>
+        <td class="text-center">
+          <div class="flex justify-center gap-2">
+            <button
+              pButton
+              icon="pi pi-pencil"
+              [routerLink]="['/medicines/edit', medicine.id]"
+              class="p-button-rounded p-button-text p-button-warning"
+              pTooltip="Editar Medicamento"
+              tooltipPosition="top"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-trash"
+              (click)="confirmDelete(medicine)"
+              class="p-button-rounded p-button-text p-button-danger"
+              pTooltip="Eliminar Medicamento"
+              tooltipPosition="top"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="text-center p-4">
+          <div class="flex flex-col items-center gap-3">
+            <i class="pi pi-capsule text-4xl text-gray-400"></i>
+            <span class="text-gray-500">No se encontraron medicamentos</span>
+            <button
+              pButton
+              label="Agregar Primer Medicamento"
+              icon="pi pi-plus"
+              [routerLink]="['/medicines/create']"
+              class="p-button-sm p-button-outlined"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

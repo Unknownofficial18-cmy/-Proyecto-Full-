@@ -1,0 +1,111 @@
+<div class="container">
+ 
+  <div class="flex justify-content-between align-items-center mb-4">
+    <div class="mr-4">
+        <h2 class="text-900">Gestión de Diagnósticos</h2>
+        <p class="text-gray-500">Lista de todos los diagnósticos registrados</p>
+    </div>
+    <button 
+        pButton 
+        icon="pi pi-plus" 
+        label="Nuevo Diagnóstico" 
+        class="p-button-primary"
+        (click)="onCreate()">
+    </button>
+</div>
+
+
+  <p-card>
+
+    <div *ngIf="loading" class="text-center p-4">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <p class="mt-2">Cargando diagnósticos...</p>
+    </div>
+
+    <!-- Table -->
+    <p-table 
+      *ngIf="!loading"
+      [value]="diagnoses" 
+      [paginator]="true" 
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+      [rowsPerPageOptions]="[5,10,20]"
+      styleClass="p-datatable-striped">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id" style="width: 10%">
+            ID <p-sortIcon field="id"></p-sortIcon>
+          </th>
+          <th pSortableColumn="description" style="width: 70%">
+            Descripción <p-sortIcon field="description"></p-sortIcon>
+          </th>
+          <th pSortableColumn="appointment_id" style="width: 20%">
+            Cita ID <p-sortIcon field="appointment_id"></p-sortIcon>
+          </th>
+          <th style="width: 15%">Acciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-diagnosis>
+        <tr>
+          <td>{{ diagnosis.id }}</td>
+          <td>
+            <div class="description-cell">
+              {{ diagnosis.description }}
+            </div>
+          </td>
+          <td>
+            <span class="font-bold text-blue-600">
+              #{{ diagnosis.appointment_id }}
+            </span>
+          </td>
+          <td>
+            <div class="flex gap-2">
+              <button 
+                pButton 
+                icon="pi pi-pencil" 
+                class="p-button-rounded p-button-info p-button-text"
+                (click)="onEdit(diagnosis.id!)"
+                pTooltip="Editar" 
+                tooltipPosition="top">
+              </button>
+              <button 
+                pButton 
+                icon="pi pi-trash" 
+                class="p-button-rounded p-button-danger p-button-text"
+                (click)="onDelete(diagnosis.id!)"
+                pTooltip="Eliminar" 
+                tooltipPosition="top">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center p-4">
+            <div class="flex flex-column align-items-center">
+              <i class="pi pi-inbox" style="font-size: 3rem; color: #ccc"></i>
+              <h3 class="mt-2">No se encontraron diagnósticos</h3>
+              <p class="text-color-secondary">No hay diagnósticos registrados en el sistema</p>
+              <button 
+                pButton 
+                icon="pi pi-plus" 
+                label="Crear primer diagnóstico" 
+                class="p-button-outlined mt-3"
+                (click)="onCreate()">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- PrimeNG Components -->
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+</div>

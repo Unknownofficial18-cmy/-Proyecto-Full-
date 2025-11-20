@@ -1,0 +1,133 @@
+<div class="container">
+  <!-- Header -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="text-primary">Gestión de Procedimientos Médicos</h2>
+      <p class="text-color-secondary">Lista de todos los procedimientos médicos registrados</p>
+    </div>
+    <button 
+      pButton 
+      icon="pi pi-plus" 
+      label="Nuevo Procedimiento" 
+      class="p-button-primary"
+      (click)="onCreate()">
+    </button>
+  </div>
+
+  <!-- Card Container -->
+  <p-card>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center p-4">
+      <i class="pi pi-spin pi-spinner text-2xl"></i>
+      <p class="mt-2">Cargando procedimientos médicos...</p>
+    </div>
+
+    <!-- Table -->
+    <p-table 
+      *ngIf="!loading"
+      [value]="procedures" 
+      [paginator]="true" 
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+      [rowsPerPageOptions]="[5,10,20]"
+      styleClass="p-datatable-striped"
+      [globalFilterFields]="['description','appointment.reason','patient.name','doctor.name']">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id" style="width: 5%">
+            ID <p-sortIcon field="id"></p-sortIcon>
+          </th>
+          <th pSortableColumn="description" style="width: 40%">
+            Descripción <p-sortIcon field="description"></p-sortIcon>
+          </th>
+          <th pSortableColumn="appointment.id" style="width: 10%">
+            Cita ID <p-sortIcon field="appointment.id"></p-sortIcon>
+          </th>
+          <th style="width: 15%">Paciente</th>
+          <th style="width: 15%">Doctor</th>
+          <th style="width: 10%">Estado</th>
+          <th style="width: 10%">Acciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-procedure>
+        <tr>
+          <td>{{ procedure.id }}</td>
+          <td>
+            <div class="description-cell">
+              {{ procedure.description | slice:0:100 }}
+              {{ procedure.description.length > 100 ? '...' : '' }}
+            </div>
+          </td>
+          <td>
+            <span class="font-bold text-blue-600">
+              #{{ procedure.appointment.id }}
+            </span>
+          </td>
+          <td>
+            <span class="font-medium">
+              {{ getPatientName(procedure) }}
+            </span>
+          </td>
+          <td>
+            <span class="text-sm">
+              {{ getDoctorName(procedure) }}
+            </span>
+          </td>
+          <td>
+            <p-tag 
+              [value]="procedure.appointment.status"
+              [severity]="getSeverity(procedure.appointment.status)"
+              styleClass="text-sm">
+            </p-tag>
+          </td>
+          <td>
+            <div class="flex gap-2">
+              <button 
+                pButton 
+                icon="pi pi-pencil" 
+                class="p-button-rounded p-button-info p-button-text"
+                (click)="onEdit(procedure.id!)"
+                pTooltip="Editar" 
+                tooltipPosition="top">
+              </button>
+              <button 
+                pButton 
+                icon="pi pi-trash" 
+                class="p-button-rounded p-button-danger p-button-text"
+                (click)="onDelete(procedure.id!)"
+                pTooltip="Eliminar" 
+                tooltipPosition="top">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            <div class="flex flex-column align-items-center">
+              <i class="pi pi-inbox" style="font-size: 3rem; color: #ccc"></i>
+              <h3 class="mt-2">No se encontraron procedimientos</h3>
+              <p class="text-color-secondary">No hay procedimientos médicos registrados en el sistema</p>
+              <button 
+                pButton 
+                icon="pi pi-plus" 
+                label="Crear primer procedimiento" 
+                class="p-button-outlined mt-3"
+                (click)="onCreate()">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- PrimeNG Components -->
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+</div>

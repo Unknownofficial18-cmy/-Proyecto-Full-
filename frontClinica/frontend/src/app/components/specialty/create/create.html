@@ -1,0 +1,52 @@
+<div class="card p-8">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-2">Nueva Especialidad</h2>
+        <p class="text-gray-600">Complete los datos para crear una nueva especialidad</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="max-w-md">
+        <div class="field mb-4">
+            <label for="specialtyname" class="block text-sm font-medium mb-2">
+                Nombre de la Especialidad *
+            </label>
+            <input
+                id="specialtyname"
+                type="text"
+                pInputText
+                formControlName="specialtyname"
+                placeholder="Ingrese el nombre de la especialidad"
+                class="w-full"
+                [class]="{'ng-invalid ng-dirty': form.get('specialtyname')?.invalid && form.get('specialtyname')?.touched}"
+            />
+            <small 
+                class="text-red-500 text-sm mt-1 block"
+                *ngIf="getFieldError('specialtyname')">
+                {{ getFieldError('specialtyname') }}
+            </small>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+            <button
+                pButton
+                type="submit"
+                label="Crear Especialidad"
+                icon="pi pi-check"
+                class="p-button-success"
+                [loading]="loading"
+                [disabled]="loading"
+            ></button>
+            
+            <button
+                pButton
+                type="button"
+                label="Cancelar"
+                icon="pi pi-times"
+                class="p-button-secondary"
+                (click)="cancelar()"
+                [disabled]="loading"
+            ></button>
+        </div>
+    </form>
+</div>
+
+<p-toast></p-toast>

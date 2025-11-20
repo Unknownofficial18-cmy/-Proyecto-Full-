@@ -1,0 +1,126 @@
+<div class="card p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Editar Medicamento en Receta</h2>
+    <button
+      pButton
+      label="Volver a Recetas"
+      icon="pi pi-arrow-left"
+      [routerLink]="['/prescriptions']"
+      class="p-button-secondary"
+    ></button>
+  </div>
+
+  <!-- Información actual -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6" *ngIf="recipeDetail">
+    <h3 class="font-semibold text-blue-800 mb-2">Información Actual del Medicamento</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <div>
+        <span class="font-medium">Medicamento:</span>
+        <p>{{ recipeDetail.medicine.name }}</p>
+      </div>
+      <div>
+        <span class="font-medium">Cantidad:</span>
+        <p>{{ recipeDetail.amount }} unidades</p>
+      </div>
+      <div>
+        <span class="font-medium">Indicaciones:</span>
+        <p>{{ recipeDetail.indications }}</p>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="recipeDetailForm" (ngSubmit)="onSubmit()" class="max-w-2xl mx-auto">
+    
+    <!-- Selección de Medicamento -->
+    <div class="field mb-4">
+      <label for="medicine_id" class="block font-medium mb-2">
+        Medicamento <span class="text-red-500">*</span>
+      </label>
+      <select
+        id="medicine_id"
+        formControlName="medicine_id"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('medicine_id')"
+      >
+        <option value="">Seleccione un medicamento</option>
+        <option *ngFor="let medicine of medicines" [value]="medicine.id" [selected]="medicine.id === recipeDetail.medicine_id">
+          {{ medicine.name }} - {{ medicine.presentation }} ({{ medicine.dose }})
+        </option>
+      </select>
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('medicine_id')">
+        {{ getFieldError('medicine_id') || 'El medicamento es requerido' }}
+      </small>
+    </div>
+
+    <!-- Cantidad -->
+    <div class="field mb-4">
+      <label for="amount" class="block font-medium mb-2">
+        Cantidad <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="number"
+        id="amount"
+        formControlName="amount"
+        min="1"
+        placeholder="Ej: 10, 20, 30"
+        (input)="onFieldChange()"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('amount')"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('amount')">
+        {{ getFieldError('amount') || 'La cantidad es requerida' }}
+      </small>
+    </div>
+
+    <!-- Indicaciones -->
+    <div class="field mb-6">
+      <label for="indications" class="block font-medium mb-2">
+        Indicaciones <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="indications"
+        formControlName="indications"
+        placeholder="Ej: Tomar cada 8 horas, Aplicar 2 veces al día, etc."
+        (input)="onFieldChange()"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('indications')"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('indications')">
+        {{ getFieldError('indications') || 'Las indicaciones son requeridas' }}
+      </small>
+    </div>
+
+    <!-- Botones -->
+    <div class="field flex justify-end gap-3">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="onCancel()"
+        class="p-button-secondary"
+        [disabled]="submitting"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        label="Actualizar Medicamento"
+        icon="pi pi-check"
+        class="p-button-warning"
+        [disabled]="recipeDetailForm.invalid || submitting || !recipeDetailForm.dirty"
+        [loading]="submitting"
+      ></button>
+    </div>
+  </form>
+
+
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center p-8">
+    <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    <p class="mt-2 text-gray-600">Cargando información del medicamento...</p>
+  </div>
+</div>
+
+<p-toast></p-toast>

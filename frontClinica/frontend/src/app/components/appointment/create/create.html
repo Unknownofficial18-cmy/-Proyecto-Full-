@@ -1,0 +1,134 @@
+<div class="card p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Agendar Nueva Cita</h2>
+    <button
+      pButton
+      label="Volver a la Lista"
+      icon="pi pi-arrow-left"
+      [routerLink]="['/appointments/my-appointments']"
+      class="p-button-secondary"
+    ></button>
+  </div>
+
+  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+    <!-- Fecha y Hora -->
+    <div class="field md:col-span-2">
+      <label for="appointment_date" class="block font-medium mb-2">
+        Fecha y Hora de la Cita <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="datetime-local"
+        id="appointment_date"
+        formControlName="appointment_date"
+        [min]="minDate"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('appointment_date')"
+      >
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('appointment_date')">
+        {{ getFieldError('appointment_date') || 'La fecha y hora son requeridas' }}
+      </small>
+    </div>
+
+    <!-- Paciente -->
+    <div class="field">
+      <label for="patient_id" class="block font-medium mb-2">
+        Paciente <span class="text-red-500">*</span>
+      </label>
+      <select
+        id="patient_id"
+        formControlName="patient_id"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('patient_id')"
+      >
+        <option value="">Seleccione un paciente</option>
+        <option *ngFor="let patient of patients" [value]="patient.id">
+          {{ patient.name }} {{ patient.last_name }}
+        </option>
+      </select>
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('patient_id')">
+        {{ getFieldError('patient_id') || 'El paciente es requerido' }}
+      </small>
+    </div>
+
+    <!-- Doctor -->
+    <div class="field">
+      <label for="doctor_id" class="block font-medium mb-2">
+        Doctor <span class="text-red-500">*</span>
+      </label>
+      <select
+        id="doctor_id"
+        formControlName="doctor_id"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('doctor_id')"
+      >
+        <option value="">Seleccione un doctor</option>
+        <option *ngFor="let doctor of doctors" [value]="doctor.id">
+          Dr. {{ doctor.name }} {{ doctor.last_name }} - {{ doctor.specialty_id|| 'Sin especialidad' }}
+        </option>
+      </select>
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('doctor_id')">
+        {{ getFieldError('doctor_id') || 'El doctor es requerido' }}
+      </small>
+    </div>
+
+    <!-- Estado -->
+    <div class="field">
+      <label for="status" class="block font-medium mb-2">Estado</label>
+      <select
+        id="status"
+        formControlName="status"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option *ngFor="let status of statusOptions" [value]="status.value">
+          {{ status.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Motivo -->
+    <div class="field md:col-span-2">
+      <label for="reason" class="block font-medium mb-2">
+        Motivo de la Cita <span class="text-red-500">*</span>
+      </label>
+      <textarea
+        id="reason"
+        formControlName="reason"
+        rows="4"
+        placeholder="Describa el motivo de la cita..."
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('reason')"
+      ></textarea>
+      <small class="text-red-500 block mt-1" *ngIf="isFieldInvalid('reason')">
+        {{ getFieldError('reason') }}
+      </small>
+      <small class="text-gray-500 block mt-1">
+        {{ appointmentForm.get('reason')?.value?.length || 0 }}/200 caracteres
+      </small>
+    </div>
+
+    <!-- Botones -->
+    <div class="field md:col-span-2 flex justify-end gap-3 mt-4">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="onCancel()"
+        class="p-button-secondary"
+        [disabled]="submitting"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        label="Agendar Cita"
+        icon="pi pi-calendar-plus"
+        class="p-button-primary"
+        [disabled]="appointmentForm.invalid || submitting"
+        [loading]="submitting"
+      ></button>
+    </div>
+  </form>
+</div>
+
+<p-toast></p-toast>

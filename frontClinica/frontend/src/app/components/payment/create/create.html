@@ -1,0 +1,209 @@
+<div class="container mx-auto p-4">
+  <p-toast></p-toast>
+  
+  <div class="card shadow-2">
+    <div class="card-header bg-primary text-white py-3">
+      <h2 class="text-2xl font-bold m-0 text-white">
+        <i class="pi pi-money-bill mr-2"></i>
+        Crear Nuevo Pago
+      </h2>
+    </div>
+
+    <div class="card-content p-4">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="grid formgrid p-fluid">
+        
+        <!-- Sección: Información de la Cita -->
+        <div class="field col-12 mb-4">
+          <div class="border-round border-1 surface-border p-3 bg-blue-50">
+            <h3 class="text-lg font-semibold text-blue-800 mb-3">
+              <i class="pi pi-calendar mr-2"></i>
+              Información de la Cita
+            </h3>
+            
+            <div class="field">
+              <label for="appointment_id" class="font-medium block mb-2">
+                Seleccionar Cita *
+              </label>
+              <select 
+                id="appointment_id"
+                pInputText
+                formControlName="appointment_id"
+                class="w-full">
+                <option value="">Seleccione una cita...</option>
+                <option *ngFor="let appointment of appointmentOptions" 
+                        [value]="appointment.value">
+                  {{ appointment.label }}
+                </option>
+              </select>
+              <small class="p-error block mt-1">
+                {{ getFieldError('appointment_id') }}
+              </small>
+              <small class="p-text-secondary block mt-1">
+                * Seleccione la cita para la cual se realizará el pago
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Detalles del Pago -->
+        <div class="field col-12 mb-4">
+          <div class="border-round border-1 surface-border p-3 bg-green-50">
+            <h3 class="text-lg font-semibold text-green-800 mb-3">
+              <i class="pi pi-credit-card mr-2"></i>
+              Detalles del Pago
+            </h3>
+            
+            <div class="grid">
+              <!-- Monto -->
+              <div class="field col-12 md:col-6">
+                <label for="amount" class="font-medium block mb-2">
+                  <i class="pi pi-dollar mr-1"></i>
+                  Monto del Pago *
+                </label>
+                <span class="p-input-icon-left w-full">
+                  <i class="pi pi-money-bill"></i>
+                  <input 
+                    type="text" 
+                    id="amount"
+                    pInputText
+                    formControlName="amount"
+                    placeholder="0.00"
+                    class="w-full"
+                    (input)="cleanAmountInput($event)"
+                    (keypress)="onAmountKeyPress($event)"
+                    (paste)="onAmountPaste($event)">
+                </span>
+                <small class="p-error block mt-1">
+                  {{ getFieldError('amount') }}
+                </small>
+                <small class="p-text-secondary block mt-1">
+                  * Ingrese el monto total a pagar
+                </small>
+              </div>
+
+              <!-- Método de Pago -->
+              <div class="field col-12 md:col-6">
+                <label for="payment_method" class="font-medium block mb-2">
+                  <i class="pi pi-wallet mr-1"></i>
+                  Método de Pago *
+                </label>
+                <select 
+                  id="payment_method"
+                  pInputText
+                  formControlName="payment_method"
+                  class="w-full">
+                  <option *ngFor="let method of paymentMethodOptions" 
+                          [value]="method.value">
+                    {{ method.label }}
+                  </option>
+                </select>
+                <small class="p-error block mt-1">
+                  {{ getFieldError('payment_method') }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Estado del Pago -->
+        <div class="field col-12 mb-4">
+          <div class="border-round border-1 surface-border p-3 bg-yellow-50">
+            <h3 class="text-lg font-semibold text-yellow-800 mb-3">
+              <i class="pi pi-info-circle mr-2"></i>
+              Estado del Pago
+            </h3>
+            
+            <div class="field">
+              <label for="payment_status" class="font-medium block mb-2">
+                Estado Actual *
+              </label>
+              <select 
+                id="payment_status"
+                pInputText
+                formControlName="payment_status"
+                class="w-full">
+                <option *ngFor="let status of paymentStatusOptions" 
+                        [value]="status.value">
+                  {{ status.label }}
+                </option>
+              </select>
+              <small class="p-error block mt-1">
+                {{ getFieldError('payment_status') }}
+              </small>
+              <small class="p-text-secondary block mt-1">
+                * Defina el estado inicial del pago
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen Rápido (solo si hay cita seleccionada) -->
+        <div *ngIf="form.get('appointment_id')?.value" class="field col-12 mb-4">
+          <div class="border-round border-1 surface-border p-3 bg-gray-50">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">
+              <i class="pi pi-eye mr-2"></i>
+              Resumen del Pago
+            </h3>
+            
+            <div class="grid text-sm">
+              <div class="col-12 md:col-4">
+                <strong>Monto:</strong><br>
+                <span class="text-green-600 font-bold text-xl">
+                  {{ formatAmountPreview(form.get('amount')?.value) }}
+                </span>
+              </div>
+              <div class="col-12 md:col-4">
+                <strong>Método:</strong><br>
+                <span class="text-blue-600">
+                  {{ getPaymentMethodLabel(form.get('payment_method')?.value) }}
+                </span>
+              </div>
+              <div class="col-12 md:col-4">
+                <strong>Estado:</strong><br>
+                <span [class]="getStatusBadgeClass(form.get('payment_status')?.value || 'PENDIENTE')">
+                  {{ getPaymentStatusLabel(form.get('payment_status')?.value) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="field col-12">
+          <div class="border-round border-1 surface-border p-3 bg-surface">
+            <div class="flex flex-column md:flex-row justify-content-between align-items-center gap-3">
+              <small class="text-secondary">
+                * Campos obligatorios
+              </small>
+              
+              <div class="flex gap-2">
+                <button 
+                  pButton 
+                  pRipple
+                  type="button" 
+                  label="Cancelar" 
+                  icon="pi pi-times"
+                  class="p-button-outlined p-button-secondary"
+                  (click)="cancelar()"
+                  [disabled]="loading">
+                </button>
+                
+                <button 
+                  pButton 
+                  pRipple
+                  type="submit" 
+                  label="Crear Pago" 
+                  icon="pi pi-check"
+                  class="p-button-success"
+                  [disabled]="loading || form.invalid || appointmentOptions.length === 0">
+                  <i *ngIf="loading" class="pi pi-spin pi-spinner ml-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
