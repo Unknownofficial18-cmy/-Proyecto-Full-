@@ -527,14 +527,15 @@ backend/
 
 
 Each app contains:
-
-```markdown
+
 myapp/
 │── models.py
 │── serializers.py
 │── views.py or viewsets.py
 │── urls_viewset.py
 │── admin.py
+
+
 
 ##9.3 Models by Application
 
