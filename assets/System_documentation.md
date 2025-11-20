@@ -507,7 +507,7 @@ The architecture follows a modular, app-based structure, where each domain (user
 
 This modular design improves scalability, maintenance, and API reusability.
 
-**9.2 Backend Folder Structure
+** 9.2 Backend Folder Structure
 ```markdown
 backend/
 │── siteclinica/
@@ -527,7 +527,7 @@ backend/
 
 
 Each app contains:
-
+```markdown
 myapp/
 │── models.py
 │── serializers.py
@@ -537,7 +537,7 @@ myapp/
 
 
 
-##9.3 Models by Application
+## 9.3 Models by Application
 
 **User App = {Doctor, Patient, Specialty}
 
@@ -551,7 +551,7 @@ myapp/
 
 These correspond exactly to the tables in the ERD image you provided.
 
-##9.4 URL Routing Structure
+## 9.4 URL Routing Structure
 
 The main file siteclinica/urls.py includes all app endpoints under the /api/ prefix:
 
